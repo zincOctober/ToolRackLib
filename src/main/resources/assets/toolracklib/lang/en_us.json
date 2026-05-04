@@ -1,0 +1,13 @@
+{
+  "itemGroup.toolracklib": "Example Mod Tab",
+  "block.toolracklib.example_block": "Example Block",
+  "item.toolracklib.example_item": "Example Item",
+
+  "toolracklib.configuration.title": "toolracklib Configs",
+  "toolracklib.configuration.section.toolracklib.common.toml": "toolracklib Configs",
+  "toolracklib.configuration.section.toolracklib.common.toml.title": "toolracklib Configs",
+  "toolracklib.configuration.items": "Item List",
+  "toolracklib.configuration.logDirtBlock": "Log Dirt Block",
+  "toolracklib.configuration.magicNumberIntroduction": "Magic Number Text",
+  "toolracklib.configuration.magicNumber": "Magic Number"
+}
