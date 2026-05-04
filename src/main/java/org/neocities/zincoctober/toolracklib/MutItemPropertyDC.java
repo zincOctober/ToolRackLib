@@ -1,5 +1,7 @@
 package org.neocities.zincoctober.toolracklib;
 
+import java.util.Objects;
+
 import com.mojang.serialization.Codec;
 import net.minecraft.network.codec.StreamCodec;
 import io.netty.buffer.ByteBuf;
@@ -11,20 +13,89 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.resources.ResourceLocation;
 
-public record MutItemPropertyDC(
-    int durability, int durabilityMax, float breakspeed, TagKey<Block> effectiveBlocks, TagKey<Block> tierTag, float swingDamage, float swingSpeed, boolean isWeapon
-) {
+public class MutItemPropertyDC {
+    int durability;
+    int durabilityMax;
+    float breakspeed;
+    TagKey<Block> effectiveBlocks;
+    TagKey<Block> tierTag;
+    float swingDamage;
+    float swingSpeed;
+    boolean isWeapon;
+
+    public MutItemPropertyDC(int durability, int durabilityMax, float breakspeed, TagKey<Block> effectiveBlocks, TagKey<Block> tierTag, float swingDamage, float swingSpeed, boolean isWeapon) {
+        this.durability = durability;
+        this.durabilityMax = durabilityMax;
+        this.breakspeed = breakspeed;
+        this.effectiveBlocks = effectiveBlocks;
+        this.tierTag = tierTag;
+        this.swingDamage = swingDamage;
+        this.swingSpeed = swingSpeed;
+        this.isWeapon = isWeapon;
+    }
+
     public MutItemPropertyDC() {
         this(100, 100, 3.0F, BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.INCORRECT_FOR_WOODEN_TOOL, 0.0F, 1.0F, false);
     }
 
-    // public MutItemPropertyDC(int durability, int durabilityMax, int breakspeed, String effectiveBlocks, String tierTag, int swingDamage, int swingSpeed, boolean isWeapon) {
-    //     this.durability = durability,
-    //     this.durabilityMax = durabilityMax,
-    //     this.breakspeed = breakspeed,
-    //     this.effectiveBlocks = effectiveBlocks,
-    //     this.tierTag =
-    // }
+    public MutItemPropertyDC blunt(int damage) {
+        this.durability -= damage;
+        return this;
+    }
+
+    public int durability() {
+		return durability;
+	}
+
+	public int durabilityMax() {
+		return durabilityMax;
+	}
+
+	public float breakspeed() {
+		return breakspeed;
+	}
+
+	public TagKey<Block> effectiveBlocks() {
+		return effectiveBlocks;
+	}
+
+	public TagKey<Block> tierTag() {
+		return tierTag;
+	}
+
+	public float swingDamage() {
+		return swingDamage;
+	}
+
+	public float swingSpeed() {
+		return swingSpeed;
+	}
+
+	public boolean isWeapon() {
+		return isWeapon;
+	}
+
+	@Override
+	public int hashCode() {
+        return Objects.hash(this.durability, this.durabilityMax, this.breakspeed, this.effectiveBlocks, this.tierTag, this.swingDamage, this.swingSpeed, this.isWeapon);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else {
+            return obj instanceof MutItemPropertyDC dc
+                && this.durability == dc.durability
+                && this.durabilityMax == dc.durabilityMax
+                && this.breakspeed == dc.breakspeed
+                && this.effectiveBlocks == dc.effectiveBlocks
+                && this.tierTag == dc.tierTag
+                && this.swingDamage == dc.swingDamage
+                && this.swingSpeed == dc.swingSpeed
+                && this.isWeapon == dc.isWeapon;
+        }
+	}
 
     public static final Codec<MutItemPropertyDC> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
