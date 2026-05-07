@@ -31,6 +31,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -147,5 +148,10 @@ public class toolracklib {
                 event.includeServer(),
                 new TRLRecipeProvider(output, lookupProvider)
         );
+    }
+
+    @SubscribeEvent
+    public void registerCommands(RegisterCommandsEvent event) {
+        MutToolCommand.register(event.getDispatcher());
     }
 }
