@@ -2,8 +2,6 @@ package org.neocities.zincoctober.toolracklib;
 
 import org.slf4j.Logger;
 
-import java.util.function.UnaryOperator;
-
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,6 +31,14 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.concurrent.CompletableFuture;
+
+import net.minecraft.data.PackOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.DataGenerator;
+
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(toolracklib.MODID)
@@ -60,7 +67,7 @@ public class toolracklib {
     public static final DeferredItem<MutableItem> MUTABLE_ITEM = ITEMS.registerItem(
         "mutable_item",
         props -> new MutableItem(props
-        .component(TRLDataComponents.MUT_ITEM_PROPERTIES, new MutItemPropertyDC())
+        //.component(TRLDataComponents.MUT_ITEM_PROPERTIES, new MutItemPropertyDC())
         )
     );
 
@@ -92,6 +99,8 @@ public class toolracklib {
         // Note that this is necessary if and only if we want *this* class (toolracklib) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+
+        //modEventBus.addListener(this::gatherData);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -125,5 +134,18 @@ public class toolracklib {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+    }
+
+    public void gatherData(GatherDataEvent event) {
+        toolracklib.LOGGER.info("REGISTERING RECIPIES");
+        DataGenerator generator = event.getGenerator();
+        PackOutput output = generator.getPackOutput();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+
+        // other providers here
+        generator.addProvider(
+                event.includeServer(),
+                new TRLRecipeProvider(output, lookupProvider)
+        );
     }
 }

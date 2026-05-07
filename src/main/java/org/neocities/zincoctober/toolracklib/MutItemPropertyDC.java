@@ -35,7 +35,7 @@ public class MutItemPropertyDC {
     }
 
     public MutItemPropertyDC() {
-        this(100, 100, 3.0F, BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.INCORRECT_FOR_WOODEN_TOOL, 0.0F, 1.0F, false);
+        this(10, 10, 5.0F, BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.INCORRECT_FOR_WOODEN_TOOL, 0.0F, 1.0F, false);
     }
 
     public MutItemPropertyDC blunt(int damage) {
