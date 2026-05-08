@@ -1,5 +1,7 @@
 package org.neocities.zincoctober.toolracklib;
 
+import java.util.List;
+
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,39 +14,42 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.component.Tool;
 
 public class MutableItem extends Item {
 
     public MutableItem(Item.Properties properties) {
-        super(properties.durability(10));
+        super(properties.durability(10).component(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BlockTags.INCORRECT_FOR_WOODEN_TOOL), Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_PICKAXE, 2.0F)), 1.0F, 1)));
     }
 
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
         stack.set(TRLDataComponents.MUT_ITEM_PROPERTIES, new MutItemPropertyDC());
+        stack.set(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BlockTags.INCORRECT_FOR_WOODEN_TOOL), Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_PICKAXE, 5.0F)), 1.0F, 1));
     }
 
-    @Override
-    public ItemStack getDefaultInstance() {
-        ItemStack stack = new ItemStack(this);
-        MutItemPropertyDC props = new MutItemPropertyDC();
-        stack.set(TRLDataComponents.MUT_ITEM_PROPERTIES, props);
-        return stack;
-    }
+    // @Override
+    // public ItemStack getDefaultInstance() {
+    //     ItemStack stack = new ItemStack(this);
+    //     MutItemPropertyDC props = new MutItemPropertyDC();
+    //     stack.set(TRLDataComponents.MUT_ITEM_PROPERTIES, props);
+    //     return stack;
+    // }
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState block) {
-        MutItemPropertyDC properties = stack.get(TRLDataComponents.MUT_ITEM_PROPERTIES);
-        if (block.is(properties.effectiveBlocks()) && !MutableItem.isBroken(stack))
-            return properties.breakspeed();
+        if (!MutableItem.isBroken(stack))
+            return super.getDestroySpeed(stack, block);
         return 1.0F;
     }
 
     @Override
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState block) {
-        MutItemPropertyDC properties = stack.get(TRLDataComponents.MUT_ITEM_PROPERTIES);
-        if (block.is(properties.effectiveBlocks()) && !block.is(properties.tierTag()) && !MutableItem.isBroken(stack))
-            return true;
+        if (!MutableItem.isBroken(stack))
+            return super.isCorrectToolForDrops(stack, block);
         return false;
     }
 
