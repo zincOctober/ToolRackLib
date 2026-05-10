@@ -99,9 +99,9 @@ public class toolracklib {
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (toolracklib) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        NeoForge.EVENT_BUS.register(this);
+        //NeoForge.EVENT_BUS.register(this);
 
-        //modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(toolracklib::gatherData);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -131,13 +131,13 @@ public class toolracklib {
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
+    // @SubscribeEvent
+    // public void onServerStarting(ServerStartingEvent event) {
+    //     // Do something when the server starts
+    //     LOGGER.info("HELLO from server starting");
+    // }
 
-    public void gatherData(GatherDataEvent event) {
+    public static void gatherData(GatherDataEvent event) {
         toolracklib.LOGGER.info("REGISTERING RECIPIES");
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();

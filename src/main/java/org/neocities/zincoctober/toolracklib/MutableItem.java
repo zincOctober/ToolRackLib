@@ -2,7 +2,6 @@ package org.neocities.zincoctober.toolracklib;
 
 import java.util.List;
 
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -10,11 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.component.Tool;
@@ -27,8 +22,16 @@ public class MutableItem extends Item {
 
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
-        stack.set(TRLDataComponents.MUT_ITEM_PROPERTIES, new MutItemPropertyDC());
         stack.set(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BlockTags.INCORRECT_FOR_WOODEN_TOOL), Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_PICKAXE, 5.0F)), 1.0F, 1));
+    }
+
+    public static ItemStack fromParts() {
+        ItemStack stack = new ItemStack(toolracklib.MUTABLE_ITEM.asItem());
+        return stack;
+    }
+
+    public static ItemStack setParts(ItemStack stack) {
+        return stack;
     }
 
     // @Override
@@ -41,14 +44,14 @@ public class MutableItem extends Item {
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState block) {
-        if (!MutableItem.isBroken(stack))
+        if (!isBroken(stack))
             return super.getDestroySpeed(stack, block);
         return 1.0F;
     }
 
     @Override
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState block) {
-        if (!MutableItem.isBroken(stack))
+        if (!isBroken(stack))
             return super.isCorrectToolForDrops(stack, block);
         return false;
     }
@@ -79,7 +82,7 @@ public class MutableItem extends Item {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState block, BlockPos pos, LivingEntity entity) {
-        if (!MutableItem.isBroken(stack)) {
+        if (!isBroken(stack)) {
             int damage = Math.min(1, stack.getMaxDamage() - stack.getDamageValue());
             stack.hurtAndBreak(damage, entity, EquipmentSlot.MAINHAND);
         }
