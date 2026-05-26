@@ -101,7 +101,7 @@ public class toolracklib {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         //NeoForge.EVENT_BUS.register(this);
 
-        modEventBus.addListener(toolracklib::gatherData);
+        //modEventBus.addListener(toolracklib::gatherData);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
