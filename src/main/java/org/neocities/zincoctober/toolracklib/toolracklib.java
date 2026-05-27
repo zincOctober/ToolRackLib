@@ -1,8 +1,11 @@
 package org.neocities.zincoctober.toolracklib;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -16,6 +19,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.data.PackOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.DataGenerator;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -32,13 +38,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-
-import java.util.concurrent.CompletableFuture;
-
-import net.minecraft.data.PackOutput;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.data.DataGenerator;
-
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -54,6 +53,8 @@ public class toolracklib {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "toolracklib" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+
+    public static final DeferredRegister<MapCodec<? extends Block>> TYPE_REGISTRAR = DeferredRegister.create(BuiltInRegistries.BLOCK_TYPE, toolracklib.MODID);
 
     // Creates a new Block with the id "toolracklib:example_block", combining the namespace and path
     public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
@@ -81,6 +82,8 @@ public class toolracklib {
                 output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
+    public static final org.neocities.zincoctober.toolracklib.nomad.Blocks nomadBlocks = new org.neocities.zincoctober.toolracklib.nomad.Blocks();
+
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public toolracklib(IEventBus modEventBus, ModContainer modContainer) {
@@ -95,6 +98,8 @@ public class toolracklib {
         ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
+
+        TYPE_REGISTRAR.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (toolracklib) to respond directly to events.
