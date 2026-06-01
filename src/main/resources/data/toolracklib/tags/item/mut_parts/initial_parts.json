@@ -1,0 +1,9 @@
+{
+    "values": [
+        {
+            "id": "toolracklib:handle_part",
+            "required": false
+        }
+    ],
+    "replace": false
+}

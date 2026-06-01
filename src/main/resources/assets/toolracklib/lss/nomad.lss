@@ -1,0 +1,15 @@
+// second row
+.row {
+    margin-top: 2;
+}
+
+.work_row {
+    height: 80;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.init_slot {
+    position: relative;
+}
