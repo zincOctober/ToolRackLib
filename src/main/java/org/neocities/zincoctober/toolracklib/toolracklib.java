@@ -1,6 +1,7 @@
 package org.neocities.zincoctober.toolracklib;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
 import org.slf4j.Logger;
 
@@ -10,6 +11,8 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -70,6 +73,20 @@ public class toolracklib {
         "mutable_item",
         props -> new MutableItem(props
         //.component(TRLDataComponents.MUT_ITEM_PROPERTIES, new MutItemPropertyDC())
+        )
+    );
+
+    public static final TagKey<Item> INITIAL_PARTS = TagKey.create(
+        // The registry key. The type of the registry must match the generic type of the tag.
+        Registries.ITEM,
+        // The location of the tag. This example will put our tag at data/examplemod/tags/blocks/example_tag.json.
+        ResourceLocation.fromNamespaceAndPath(MODID, "mut_parts/initial_parts")
+    );
+
+    public static final DeferredItem<MutItemPart> HANDLE_PART = ITEMS.registerItem(
+        "handle_part",
+        props -> new MutItemPart(props,
+            List.of(new MutItemPart.Hardpoint(List.of(INITIAL_PARTS), "above"))
         )
     );
 
