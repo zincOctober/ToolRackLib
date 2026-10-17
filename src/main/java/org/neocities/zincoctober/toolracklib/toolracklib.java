@@ -2,6 +2,7 @@ package org.neocities.zincoctober.toolracklib;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
@@ -10,7 +11,9 @@ import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodProperties;
@@ -25,6 +28,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.data.PackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.world.item.Item.Properties;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -40,6 +44,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
@@ -56,6 +61,12 @@ public class toolracklib {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "toolracklib" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+
+    public static final ResourceKey<Registry<MutItemPart>> ITEM_PARTS_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "item_parts"));
+
+    // public static final Registry<MutItemPart> ITEM_PARTS_REGISTRY = new RegistryBuilder<>(ITEM_PARTS_KEY).create();
+
+    // public static final DeferredRegister<MutItemPart> ITEM_PARTS = DeferredRegister.create(ITEM_PARTS_REGISTRY, MODID);
 
     public static final DeferredRegister<MapCodec<? extends Block>> TYPE_REGISTRAR = DeferredRegister.create(BuiltInRegistries.BLOCK_TYPE, toolracklib.MODID);
 
@@ -83,12 +94,33 @@ public class toolracklib {
         ResourceLocation.fromNamespaceAndPath(MODID, "mut_parts/initial_parts")
     );
 
-    public static final DeferredItem<MutItemPart> HANDLE_PART = ITEMS.registerItem(
+    public static final TagKey<Item> HEAD_PARTS = TagKey.create(
+        // The registry key. The type of the registry must match the generic type of the tag.
+        Registries.ITEM,
+        // The location of the tag. This example will put our tag at data/examplemod/tags/blocks/example_tag.json.
+        ResourceLocation.fromNamespaceAndPath(toolracklib.MODID, "mut_parts/head_parts")
+    );
+
+    public static final TagKey<Item> MUT_PARTS = TagKey.create(
+        // The registry key. The type of the registry must match the generic type of the tag.
+        Registries.ITEM,
+        // The location of the tag. This example will put our tag at data/examplemod/tags/blocks/example_tag.json.
+        ResourceLocation.fromNamespaceAndPath(toolracklib.MODID, "mut_parts/mut_parts")
+    );
+
+    public static final DeferredItem<MutItemPart> HANDLE_PART_ITEM = ITEMS.registerItem(
         "handle_part",
-        props -> new MutItemPart(props,
-            List.of(new MutItemPart.Hardpoint(List.of(INITIAL_PARTS), "above"))
+        props -> new HandlePart(props,
+            List.of(new MutItemPart.Hardpoint(List.of(HEAD_PARTS), "above"))
         )
     );
+
+    // public static final Supplier<MutItemPart> HANDLE_PART = ITEM_PARTS.register(
+    //     "handle_part",
+    //     () -> new MutItemPart(new Properties(),
+    //         List.of(new MutItemPart.Hardpoint(List.of(HEAD_PARTS), "above"))
+    //     )
+    // );
 
     // Creates a creative tab with the id "toolracklib:example_tab" for the example item, that is placed after the combat tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
@@ -100,6 +132,7 @@ public class toolracklib {
             }).build());
 
     public static final org.neocities.zincoctober.toolracklib.nomad.Blocks nomadBlocks = new org.neocities.zincoctober.toolracklib.nomad.Blocks();
+    public static final org.neocities.zincoctober.toolracklib.tools.ItemParts itemParts = new org.neocities.zincoctober.toolracklib.tools.ItemParts();
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
@@ -117,6 +150,8 @@ public class toolracklib {
         CREATIVE_MODE_TABS.register(modEventBus);
 
         TYPE_REGISTRAR.register(modEventBus);
+
+        //ITEM_PARTS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (toolracklib) to respond directly to events.
@@ -159,21 +194,16 @@ public class toolracklib {
     //     LOGGER.info("HELLO from server starting");
     // }
 
-    public static void gatherData(GatherDataEvent event) {
-        toolracklib.LOGGER.info("REGISTERING RECIPIES");
-        DataGenerator generator = event.getGenerator();
-        PackOutput output = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-
-        // other providers here
-        generator.addProvider(
-                event.includeServer(),
-                new TRLRecipeProvider(output, lookupProvider)
-        );
-    }
-
-    @SubscribeEvent
-    public void registerCommands(RegisterCommandsEvent event) {
-        MutToolCommand.register(event.getDispatcher());
-    }
+    // public static void gatherData(GatherDataEvent event) {
+    //     toolracklib.LOGGER.info("REGISTERING RECIPIES");
+    //     DataGenerator generator = event.getGenerator();
+    //     PackOutput output = generator.getPackOutput();
+    //     CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+    //
+    //     // other providers here
+    //     generator.addProvider(
+    //             event.includeServer(),
+    //             new TRLRecipeProvider(output, lookupProvider)
+    //     );
+    // }
 }

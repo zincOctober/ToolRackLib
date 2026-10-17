@@ -1,9 +1,9 @@
 {
   "baseBreakSpeed": 5.0,
   "baseDurability": 10,
+  "baseSwingDamage": 0.0,
+  "baseSwingSpeed": 1.0,
   "component": "#minecraft:planks",
   "incorrectFor": "minecraft:mineable/pickaxe",
-  "isWeapon": false,
-  "swingDamage": 0.0,
-  "swingSpeed": 1.0
+  "name": "planks"
 }

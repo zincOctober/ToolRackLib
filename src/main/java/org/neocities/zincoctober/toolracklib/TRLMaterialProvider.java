@@ -29,7 +29,7 @@ public class TRLMaterialProvider extends JsonCodecProvider<Material> {
     protected void gather() {
         //try {
             HolderSet<Item> holderSet = HolderSet.emptyNamed(BuiltInRegistries.ITEM.holderOwner(), ItemTags.PLANKS);
-            unconditional(ResourceLocation.fromNamespaceAndPath("toolracklib", "default"), new Material(holderSet, 10, BlockTags.MINEABLE_WITH_PICKAXE, 5.0F, 1.0F, 0.0F, false));
+            unconditional(ResourceLocation.fromNamespaceAndPath("toolracklib", "planks"), new Material("planks", holderSet, 10, BlockTags.MINEABLE_WITH_PICKAXE, 5.0F, 1.0F, 0.0F));
         // } catch (InterruptedException e) {
         //
         // } catch (ExecutionException e) {

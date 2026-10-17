@@ -6,25 +6,42 @@ import java.util.List;
 import net.minecraft.world.item.Item;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.client.Minecraft;
 
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 public class MutPartStackHandler<T> extends ItemStackHandler {
-    public ItemStackHandler output;
+    public MutPartToolOutput output;
     public ArrayList<PartBranch> partTree = new ArrayList<PartBranch>(List.of(new PartBranch()));
     protected OnAdd<T> onAdd = null;
     protected OnRemove<T> onRemove = null;
+    private RegistryAccess registryAccess;
 
-    public MutPartStackHandler() {
+    public MutPartStackHandler(Level level) {
         this.partTree.get(0).filter.add(toolracklib.INITIAL_PARTS);
+        output = new MutPartToolOutput();
+        if (level instanceof ServerLevel serverLevel) {
+            this.registryAccess = serverLevel.registryAccess();
+        } else {
+            this.registryAccess = Minecraft.getInstance().getConnection().registryAccess();
+        }
+
     }
 
-    public MutPartStackHandler(OnAdd<T> onAdd, OnRemove<T> onRemove) {
+    public MutPartStackHandler(OnAdd<T> onAdd, OnRemove<T> onRemove, Level level) {
         this.onAdd = onAdd;
         this.onRemove = onRemove;
         this.partTree.get(0).filter.add(toolracklib.INITIAL_PARTS);
+        output = new MutPartToolOutput();
+        if (level instanceof ServerLevel serverLevel) {
+            this.registryAccess = serverLevel.registryAccess();
+        } else {
+            this.registryAccess = Minecraft.getInstance().getConnection().registryAccess();
+        }
     }
 
     public void setInitSlot(T initUI) {
@@ -61,6 +78,10 @@ public class MutPartStackHandler<T> extends ItemStackHandler {
                     }
                 }
             }
+        }
+
+        if (this.getStackInSlot(0) != ItemStack.EMPTY) {
+            output.setStackInSlot(0, MutableItem.fromParts(stacks, registryAccess));
         }
     }
 
@@ -129,5 +150,17 @@ public class MutPartStackHandler<T> extends ItemStackHandler {
         public NonNullList<Integer> children = NonNullList.create();
         public T owner = null;
         protected NonNullList<TagKey<Item>> filter = NonNullList.create();
+    }
+
+    public class MutPartToolOutput extends ItemStackHandler {
+
+        public MutPartToolOutput() {
+            super();
+        }
+
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return false;
+        }
     }
 }

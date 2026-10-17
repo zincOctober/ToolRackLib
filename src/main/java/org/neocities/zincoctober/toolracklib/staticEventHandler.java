@@ -14,6 +14,8 @@ import net.minecraft.tags.BlockTags;
 
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
@@ -34,10 +36,10 @@ public class staticEventHandler {
                     bootstrap.register(
                         ResourceKey.create(
                             Materials.MATERIAL_REGISTRY_KEY,
-                            ResourceLocation.fromNamespaceAndPath(toolracklib.MODID, "default")
+                            ResourceLocation.fromNamespaceAndPath(toolracklib.MODID, "planks")
                         ),
                         new Material(
-                            bootstrap.lookup(Registries.ITEM).getOrThrow(ItemTags.PLANKS), 10, BlockTags.MINEABLE_WITH_PICKAXE, 5.0F, 1.0F, 0.0F, false
+                            "planks", bootstrap.lookup(Registries.ITEM).getOrThrow(ItemTags.PLANKS), 10, BlockTags.MINEABLE_WITH_PICKAXE, 5.0F, 1.0F, 0.0F
                         )
                     );
                 })
@@ -52,5 +54,15 @@ public class staticEventHandler {
         //     event.includeServer(),
         //     new TRLMaterialProvider(output, lookupProvider, existingFileHelper)
         // );
+    }
+
+    // @SubscribeEvent
+    // public static void registerRegistries(NewRegistryEvent event) {
+    //     event.register(toolracklib.ITEM_PARTS_REGISTRY);
+    // }
+
+    @SubscribeEvent
+    public static void registerCommands(RegisterCommandsEvent event) {
+        MutToolCommand.register(event.getDispatcher());
     }
 }

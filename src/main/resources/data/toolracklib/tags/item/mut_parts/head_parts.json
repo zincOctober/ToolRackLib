@@ -1,0 +1,9 @@
+{
+    "values": [
+        {
+            "id": "toolracklib:pickaxe_part",
+            "required": false
+        }
+    ],
+    "replace": false
+}

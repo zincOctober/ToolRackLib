@@ -3,13 +3,65 @@
     margin-top: 2;
 }
 
+// second column
+.column {
+    margin-left: 2;
+}
+
+// =============== workbench ================
+
 .work_row {
-    height: 80;
+    height: 120;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+//first mount
 .init_slot {
+    width: 18;
+    height: 18;
     position: relative;
+}
+
+//dynamic mounts
+.slot_mount {
+    width: 18;
+    height: 18;
+    position: relative;
+}
+
+// ============== container layouts ================
+
+.above_container {
+    position: absolute;
+    bottom: 100%;
+}
+
+// ============== part bench ==================
+
+.part_bench {
+    width: 60;
+    height: 40;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.part_bench_arrow {
+    width: 30;
+}
+
+.part_button {
+    width: 20;
+    height: 20;
+}
+
+.part_scroller {
+
+}
+
+.part_scroller_view {
+    flex-direction: row;
+    flex-wrap: wrap;
 }

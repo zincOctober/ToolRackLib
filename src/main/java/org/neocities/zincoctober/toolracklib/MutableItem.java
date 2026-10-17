@@ -13,11 +13,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.component.Tool;
+import net.minecraft.core.RegistryAccess;
 
 public class MutableItem extends Item {
 
     public MutableItem(Item.Properties properties) {
-        super(properties.durability(10).component(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BlockTags.INCORRECT_FOR_WOODEN_TOOL), Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_PICKAXE, 2.0F)), 1.0F, 1)));
+        super(properties);
+    }
+
+    public MutableItem newDefault(Item.Properties properties) {
+        Item.Properties props = properties.durability(10).component(
+            DataComponents.TOOL, new Tool(List.of(
+                Tool.Rule.deniesDrops(BlockTags.INCORRECT_FOR_WOODEN_TOOL), 
+                Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_PICKAXE, 2.0F)
+                ), 1.0F, 1));
+        return new MutableItem(props);
     }
 
     @Override
@@ -25,8 +35,16 @@ public class MutableItem extends Item {
         stack.set(DataComponents.TOOL, new Tool(List.of(Tool.Rule.deniesDrops(BlockTags.INCORRECT_FOR_WOODEN_TOOL), Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_PICKAXE, 5.0F)), 1.0F, 1));
     }
 
-    public static ItemStack fromParts() {
-        ItemStack stack = new ItemStack(toolracklib.MUTABLE_ITEM.asItem());
+    public static ItemStack fromParts(List<ItemStack> parts, RegistryAccess registryAccess) {
+
+        MutItemPart.ItemBuilder itemBuilder = null;
+        for (ItemStack part : parts) {
+            if (part.getItem() instanceof MutItemPart partItem) {
+                itemBuilder = partItem.assemble(itemBuilder, registryAccess, part);
+            }
+        }
+
+        ItemStack stack = new ItemStack(itemBuilder.Finish());
         return stack;
     }
 

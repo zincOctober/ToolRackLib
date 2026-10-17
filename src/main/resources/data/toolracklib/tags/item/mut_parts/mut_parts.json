@@ -1,0 +1,13 @@
+{
+    "values": [
+        {
+            "id": "toolracklib:handle_part",
+            "required": false
+        },
+        {
+            "id": "toolracklib:pickaxe_part",
+            "required": false
+        }
+    ],
+    "replace": false
+}
